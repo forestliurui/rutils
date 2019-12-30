@@ -13,6 +13,10 @@ logging.basicConfig(level=logging.INFO,
 class BasicLogging():
     def __init__(self):
         BasicLogging.info('==============Init Logger to StdOut============')
+    
+    @staticmethod
+    def set_level(level):
+        logging.setLevel(level)
 
     @staticmethod
     def debug(msg):
@@ -36,43 +40,53 @@ class BasicLogging():
 
 
 class FileLogging():
-    def __init__(self, log_id, folder='~/log'):
-        # logger1 = logging.getLogger('to_screen')
-        # logger1.setLevel(logging.INFO)
+    def __init__(self, log_id=None, folder='~/log'):
 
         # expand ~ to its full path
         folder = os.path.expanduser(folder)
 
-        logger2 = logging.getLogger('to_file')
-        logger2.setLevel(logging.INFO)
+        if log_id is None:
+          logger1 = logging.getLogger('to_screen')
+          logger1.setLevel(logging.INFO)
+          ch = logging.StreamHandler()
+          ch.setFormatter(formatter)
+          logger1.addHandler(ch)
+          self.screen_logger = logger1
 
-        # ch = logging.StreamHandler()
-        log_file = folder+'/{}.log'.format(log_id)
-        fh = logging.FileHandler(log_file)
+          self.logger = self.screen_logger
+          self.logger.info('==============Init Logger to screen ============')
+        else:
+          logger2 = logging.getLogger('to_file')
+          logger2.setLevel(logging.INFO)
 
-        formatter = logging.Formatter('%(asctime)s %(levelname)s: %(message)s')
-        fh.setFormatter(formatter)
-        # ch.setFormatter(formatter)
+          log_file = folder+'/{}.log'.format(log_id)
+          fh = logging.FileHandler(log_file)
 
-        # logger1.addHandler(ch)
-        logger2.addHandler(fh)
+          formatter = logging.Formatter('%(asctime)s %(levelname)s: %(message)s')
+          fh.setFormatter(formatter)
 
-        # self.screen_logger = logger1
-        self.file_logger = logger2
+          logger2.addHandler(fh)
 
-        self.file_logger.info('==============Init Logger to '+ log_file  +'============')
+          self.file_logger = logger2
+          
+          self.logger = self.file_logger
+          self.logger.info('==============Init Logger to '+ log_file  +'============')
+
+
+    def set_level(self, level):
+        self.logger.setLevel(level)
 
     def debug(self, msg):
-        self.file_logger.debug(msg)
+        self.logger.debug(msg)
 
     def info(self, msg):
-        self.file_logger.info(msg)
+        self.logger.info(msg)
 
     def warning(self, msg):
-        self.file_logger.warning(msg)
+        self.logger.warning(msg)
 
     def error(self, msg):
-        self.file_logger.error(msg)
+        self.logger.error(msg)
 
     def critical(self, msg):
-        self.file_logger.critical(msg)
+        self.logger.critical(msg)
