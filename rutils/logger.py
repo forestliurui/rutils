@@ -1,5 +1,6 @@
 import logging
 import sys
+import os
 
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(levelname)s: %(message)s',
@@ -38,6 +39,9 @@ class FileLogging():
     def __init__(self, log_id, folder='~/log'):
         # logger1 = logging.getLogger('to_screen')
         # logger1.setLevel(logging.INFO)
+
+        # expand ~ to its full path
+        folder = os.path.expanduser(folder)
 
         logger2 = logging.getLogger('to_file')
         logger2.setLevel(logging.INFO)
