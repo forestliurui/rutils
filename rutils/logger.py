@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.INFO,
 
 class BasicLogging():
     def __init__(self):
-        BasicLogging.info('==============Init Logger============')
+        BasicLogging.info('==============Init Logger to StdOut============')
 
     @staticmethod
     def debug(msg):
@@ -60,7 +60,7 @@ class FileLogging():
         # self.screen_logger = logger1
         self.file_logger = logger2
 
-        self.file_logger.info('==============Init Logger============')
+        self.file_logger.info('==============Init Logger to '+ log_file  +'============')
 
     def debug(self, msg):
         self.file_logger.debug(msg)
