@@ -2,3 +2,4 @@ from .utils import tensor_to_image, fix_random_seed, visualize_dataset, decode_c
 from .eval import rel_error, compute_numeric_gradient
 from . import data
 from .gpu import get_free_gpu
+from .logger import BasicLogging, FileLogging
