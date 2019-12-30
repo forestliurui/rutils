@@ -49,6 +49,7 @@ class FileLogging():
           logger1 = logging.getLogger('to_screen')
           logger1.setLevel(logging.INFO)
           ch = logging.StreamHandler()
+          formatter = logging.Formatter('%(asctime)s %(levelname)s: %(message)s')
           ch.setFormatter(formatter)
           logger1.addHandler(ch)
           self.screen_logger = logger1
