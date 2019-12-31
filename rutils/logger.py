@@ -48,13 +48,12 @@ class FileLogging():
         if log_id is None:
           logger1 = logging.getLogger('to_screen')
           logger1.setLevel(logging.INFO)
-          ch = logging.StreamHandler()
+          ch = logging.StreamHandler(sys.stdout)
           formatter = logging.Formatter('%(asctime)s %(levelname)s: %(message)s')
           ch.setFormatter(formatter)
           logger1.addHandler(ch)
-          self.screen_logger = logger1
+          self.logger = logger1
 
-          self.logger = self.screen_logger
           self.logger.info('==============Init Logger to screen ============')
         else:
           logger2 = logging.getLogger('to_file')
@@ -68,9 +67,8 @@ class FileLogging():
 
           logger2.addHandler(fh)
 
-          self.file_logger = logger2
+          self.logger = logger2
           
-          self.logger = self.file_logger
           self.logger.info('==============Init Logger to '+ log_file  +'============')
 
 
