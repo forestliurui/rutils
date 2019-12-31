@@ -18,4 +18,4 @@ def get_free_gpu():
     if len(memory_available) == 0:
       return None # no gpu available
     idx =  np.argmax(memory_available)
-    return idx
+    return int(idx)
