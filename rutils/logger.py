@@ -73,7 +73,25 @@ class FileLogging():
 
 
     def set_level(self, level):
-        self.logger.setLevel(level)
+        """
+        set the level for logger
+
+        inputs:
+          - level: a string from ['DEBUG', 'INFO', 'WARNING', 'ERROR']
+
+        returns:
+          - None. Set the logger to the specified level
+        """
+        if level == 'DEBUG':
+            self.logger.setLevel(logging.DEBUG)
+        elif level == 'INFO':
+            self.logger.setLevel(logging.INFO)
+        elif level == 'WARNING':
+            self.logger.setLevel(logging.WARNING)
+        elif level == 'ERROR':
+            self.logger.setLevel(logging.ERROR)
+        else:
+            raise ValueError('level %s not supported!'%level)
 
     def debug(self, msg):
         self.logger.debug(msg)
