@@ -1,5 +1,7 @@
 import os
 import torch
+
+from torchvision import datasets, transforms
 from torchvision.datasets import CIFAR10
 
 
@@ -27,7 +29,7 @@ def _extract_tensors(dset, num=None):
   return x, y
 
 
-def cifar10(num_train=None, num_test=None):
+def cifar10_old(num_train=None, num_test=None):
   """
   Return the CIFAR10 dataset, automatically downloading it if necessary.
   This function can also subsample the dataset.
@@ -51,3 +53,134 @@ def cifar10(num_train=None, num_test=None):
   x_test, y_test = _extract_tensors(dset_test, num_test)
  
   return x_train, y_train, x_test, y_test
+
+
+def mnist(root='~/data/mnist', num_workers=0):
+    root = os.path.expanduser(root)  
+    training_set = datasets.MNIST(root, train=True, download=True,
+                   transform=transforms.Compose([
+                       transforms.ToTensor(),
+                       transforms.Normalize((0.1307,), (0.3081,))]))
+        
+    num_workers_dl = num_workers
+    train_loader = DataLoader(training_set, batch_size=args.batch_size, shuffle=True, num_workers=num_workers_dl)
+    test_loader = torch.utils.data.DataLoader(
+            datasets.MNIST(root, train=False, transform=transforms.Compose([
+                       transforms.ToTensor(),
+                       transforms.Normalize((0.1307,), (0.3081,))
+                   ])), batch_size=args.test_batch_size, shuffle=True, num_workers=num_workers_dl)
+    return train_loader, test_loader
+
+def cifar10(root='~/data/cifar10', num_workers=0):
+    root = os.path.expanduser(root)
+    transform_train = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Lambda(lambda x: F.pad(
+                                Variable(x.unsqueeze(0), requires_grad=False, volatile=True),
+                                (4,4,4,4),mode='reflect').data.squeeze()),
+            transforms.ToPILImage(),
+            transforms.RandomCrop(32),
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            normalize,
+            ])
+    # data prep for test set
+    transform_test = transforms.Compose([
+            transforms.ToTensor(),
+            normalize])
+    # load training and test set here:
+    training_set = datasets.CIFAR10(root=root, train=True,
+                                                download=True, transform=transform_train)
+    train_loader = torch.utils.data.DataLoader(training_set, batch_size=args.batch_size,
+                                                  shuffle=True, num_workers=num_workers)
+    testset = datasets.CIFAR10(root=root, train=False,
+                                               download=True, transform=transform_test)
+    test_loader = torch.utils.data.DataLoader(testset, batch_size=args.test_batch_size,
+                                                 shuffle=False, num_workers=num_workers)
+    return train_loader, test_loader
+
+def cifar100(root='~/data/cifar100', num_workers=0):
+    root = os.path.expanduser(root)    
+    normalize = transforms.Normalize(mean=[x/255.0 for x in [125.3, 123.0, 113.9]],
+                                std=[x/255.0 for x in [63.0, 62.1, 66.7]])
+    transform_train = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Lambda(lambda x: F.pad(
+                                Variable(x.unsqueeze(0), requires_grad=False, volatile=True),
+                                (4,4,4,4),mode='reflect').data.squeeze()),
+            transforms.ToPILImage(),
+            transforms.RandomCrop(32),
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            normalize,
+            ])
+    # data prep for test set
+    transform_test = transforms.Compose([
+            transforms.ToTensor(),
+            normalize])
+    # load training and test set here:
+    training_set = datasets.CIFAR100(root=root, train=True,
+                                                download=True, transform=transform_train)
+    train_loader = torch.utils.data.DataLoader(training_set, batch_size=args.batch_size,
+                                                  shuffle=True, num_workers=num_workers)
+    testset = datasets.CIFAR100(root=root, train=False,
+                                               download=True, transform=transform_test)
+    test_loader = torch.utils.data.DataLoader(testset, batch_size=args.test_batch_size,
+                                                 shuffle=False, num_workers=num_workers)
+    return train_loader, test_loader
+
+def svhn(root='~/data/svhn', num_workers=0):
+    root = os.path.expanduser(root)
+    training_set = SVHN(root, split='train', transform=transforms.Compose([
+                                 transforms.RandomCrop(32, padding=4),
+                                 transforms.RandomHorizontalFlip(),
+                                 transforms.ToTensor(),
+                                 transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+                             ]))
+    train_loader = torch.utils.data.DataLoader(training_set, batch_size=128,
+                                                  shuffle=True, num_workers=num_workers)
+    transform_test = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+            ])
+    testset = SVHN(root=root, split='test', download=True, transform=transform_test)
+    test_loader = torch.utils.data.DataLoader(testset, batch_size=1000,
+                                                 shuffle=False, num_workers=num_workers)
+    return train_loader, test_loader
+
+def imagenet(root='~/data/imagenet', num_workers=0):   
+    from .imagenet import ImageNet 
+    root = os.path.expanduser(root)
+
+    traindir = os.path.join(root, 'train')
+    valdir = os.path.join(root, 'val')
+
+    normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                         std=[0.229, 0.224, 0.225])
+
+    train_dataset = ImageNet(
+            root,
+            split='train',
+            download=False,
+            transform=transforms.Compose([
+                transforms.RandomResizedCrop(224),
+                transforms.RandomHorizontalFlip(),
+                transforms.ToTensor(),
+                normalize,
+            ]))
+    test_dataset = ImageNet(
+            root,
+            split='val',
+            download=False,
+            transform=transforms.Compose([
+                transforms.RandomResizedCrop(224),
+                transforms.RandomHorizontalFlip(),
+                transforms.ToTensor(),
+                normalize,
+            ]))
+    num_workers_dl = num_workers
+    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.batch_size,
+                                                  shuffle=True, num_workers=num_workers_dl)
+    test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=args.test_batch_size,
+                                                 shuffle=False, num_workers=num_workers_dl)
+    return train_loader, test_loader
