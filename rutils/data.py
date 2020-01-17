@@ -73,6 +73,8 @@ def mnist(root='~/data/mnist', train_batch_size=128, test_batch_size=128, train_
 
 def cifar10(root='~/data/cifar10', train_batch_size=128, test_batch_size=128, train_shuffle=True, test_shuffle=False, num_workers=0):
     root = os.path.expanduser(root)
+    normalize = transforms.Normalize(mean=[x/255.0 for x in [125.3, 123.0, 113.9]],
+                                std=[x/255.0 for x in [63.0, 62.1, 66.7]])
     transform_train = transforms.Compose([
             transforms.ToTensor(),
             transforms.Lambda(lambda x: F.pad(
