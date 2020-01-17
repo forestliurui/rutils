@@ -3,6 +3,8 @@ import os
 import time
 import random
 from filelock import FileLock
+from .time import get_current_time
+import socket
 
 def get_free_gpu():
     """
@@ -14,10 +16,11 @@ def get_free_gpu():
     Returns:
     - idx: an integer scalar which is the index of the returned GPU 
     """
-    lock = FileLock('get_free_gpu.lock')
-    time.sleep(random.random())
+    hostname = socket.gethostname()
+    lock = FileLock(hostname + '_get_free_gpu.lock')
+    #time.sleep(random.random())
     with lock:
-      tmp_file = 'tmp_gpu'
+      tmp_file = hostname + '_tmp_gpu'
       os.system('nvidia-smi -q -d Memory |grep -A4 GPU|grep Free >' + tmp_file)
       memory_available = [int(x.split()[2]) for x in open(tmp_file, 'r').readlines()]
       os.system('rm '+tmp_file)
