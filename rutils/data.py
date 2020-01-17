@@ -55,7 +55,7 @@ def cifar10_old(num_train=None, num_test=None):
   return x_train, y_train, x_test, y_test
 
 
-def mnist(root='~/data/mnist', num_workers=0):
+def mnist(root='~/data/mnist', train_batch_size=128, test_batch_size=128, num_workers=0):
     root = os.path.expanduser(root)  
     training_set = datasets.MNIST(root, train=True, download=True,
                    transform=transforms.Compose([
@@ -63,15 +63,15 @@ def mnist(root='~/data/mnist', num_workers=0):
                        transforms.Normalize((0.1307,), (0.3081,))]))
         
     num_workers_dl = num_workers
-    train_loader = DataLoader(training_set, batch_size=args.batch_size, shuffle=True, num_workers=num_workers_dl)
+    train_loader = DataLoader(training_set, batch_size=train_batch_size, shuffle=True, num_workers=num_workers_dl)
     test_loader = torch.utils.data.DataLoader(
             datasets.MNIST(root, train=False, transform=transforms.Compose([
                        transforms.ToTensor(),
                        transforms.Normalize((0.1307,), (0.3081,))
-                   ])), batch_size=args.test_batch_size, shuffle=True, num_workers=num_workers_dl)
+                   ])), batch_size=test_batch_size, shuffle=True, num_workers=num_workers_dl)
     return train_loader, test_loader
 
-def cifar10(root='~/data/cifar10', num_workers=0):
+def cifar10(root='~/data/cifar10', train_batch_size=128, test_batch_size=128, num_workers=0):
     root = os.path.expanduser(root)
     transform_train = transforms.Compose([
             transforms.ToTensor(),
@@ -91,15 +91,15 @@ def cifar10(root='~/data/cifar10', num_workers=0):
     # load training and test set here:
     training_set = datasets.CIFAR10(root=root, train=True,
                                                 download=True, transform=transform_train)
-    train_loader = torch.utils.data.DataLoader(training_set, batch_size=args.batch_size,
+    train_loader = torch.utils.data.DataLoader(training_set, batch_size=train_batch_size,
                                                   shuffle=True, num_workers=num_workers)
     testset = datasets.CIFAR10(root=root, train=False,
                                                download=True, transform=transform_test)
-    test_loader = torch.utils.data.DataLoader(testset, batch_size=args.test_batch_size,
+    test_loader = torch.utils.data.DataLoader(testset, batch_size=test_batch_size,
                                                  shuffle=False, num_workers=num_workers)
     return train_loader, test_loader
 
-def cifar100(root='~/data/cifar100', num_workers=0):
+def cifar100(root='~/data/cifar100', train_batch_size=128, test_batch_size=128, num_workers=0):
     root = os.path.expanduser(root)    
     normalize = transforms.Normalize(mean=[x/255.0 for x in [125.3, 123.0, 113.9]],
                                 std=[x/255.0 for x in [63.0, 62.1, 66.7]])
@@ -121,15 +121,15 @@ def cifar100(root='~/data/cifar100', num_workers=0):
     # load training and test set here:
     training_set = datasets.CIFAR100(root=root, train=True,
                                                 download=True, transform=transform_train)
-    train_loader = torch.utils.data.DataLoader(training_set, batch_size=args.batch_size,
+    train_loader = torch.utils.data.DataLoader(training_set, batch_size=train_batch_size,
                                                   shuffle=True, num_workers=num_workers)
     testset = datasets.CIFAR100(root=root, train=False,
                                                download=True, transform=transform_test)
-    test_loader = torch.utils.data.DataLoader(testset, batch_size=args.test_batch_size,
+    test_loader = torch.utils.data.DataLoader(testset, batch_size=test_batch_size,
                                                  shuffle=False, num_workers=num_workers)
     return train_loader, test_loader
 
-def svhn(root='~/data/svhn', num_workers=0):
+def svhn(root='~/data/svhn', train_batch_size=128, test_batch_size=128, num_workers=0):
     root = os.path.expanduser(root)
     training_set = SVHN(root, split='train', transform=transforms.Compose([
                                  transforms.RandomCrop(32, padding=4),
@@ -137,18 +137,18 @@ def svhn(root='~/data/svhn', num_workers=0):
                                  transforms.ToTensor(),
                                  transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
                              ]))
-    train_loader = torch.utils.data.DataLoader(training_set, batch_size=128,
+    train_loader = torch.utils.data.DataLoader(training_set, batch_size=train_batch_size,
                                                   shuffle=True, num_workers=num_workers)
     transform_test = transforms.Compose([
             transforms.ToTensor(),
             transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
             ])
     testset = SVHN(root=root, split='test', download=True, transform=transform_test)
-    test_loader = torch.utils.data.DataLoader(testset, batch_size=1000,
+    test_loader = torch.utils.data.DataLoader(testset, batch_size=test_batch_size,
                                                  shuffle=False, num_workers=num_workers)
     return train_loader, test_loader
 
-def imagenet(root='~/data/imagenet', num_workers=0):   
+def imagenet(root='~/data/imagenet', train_batch_size=1024, test_batch_size=1024, num_workers=0):   
     from .imagenet import ImageNet 
     root = os.path.expanduser(root)
 
@@ -179,8 +179,8 @@ def imagenet(root='~/data/imagenet', num_workers=0):
                 normalize,
             ]))
     num_workers_dl = num_workers
-    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.batch_size,
+    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=train_batch_size,
                                                   shuffle=True, num_workers=num_workers_dl)
-    test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=args.test_batch_size,
+    test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=test_batch_size,
                                                  shuffle=False, num_workers=num_workers_dl)
     return train_loader, test_loader
