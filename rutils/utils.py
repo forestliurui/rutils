@@ -87,3 +87,16 @@ def decode_captions(captions, idx_to_word):
     if singleton:
         decoded = decoded[0]
     return decoded
+
+def smoothen(curve_list, window_size=5):
+    result_list = []
+    for i in range(len(curve_list)):
+        if i+1 < window_size:
+            avg = np.mean(curve_list[:i+1])
+        else:
+            avg = np.mean(curve_list[i+1-window_size:i+1])
+        result_list.append(avg)
+
+    return result_list
+
+

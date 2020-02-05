@@ -55,7 +55,7 @@ def plot_2d_curve(filename, data, x_label, y_label, colors, markers):
     for name in curve_names:
         x_axis = data[name]['x']
         y_axis = data[name]['y']
-        plt.plot(x_axis, y_axis, '-', color=colors[name], marker=markers[name], linewidth=10, markersize=40)
+        plt.plot(x_axis, y_axis, '-', color=colors[name], marker=markers[name], linewidth=10, markersize=20)
 
     plt.xlabel(x_label, fontsize=50)
     plt.ylabel(y_label, fontsize=50)
@@ -107,3 +107,4 @@ def plot_bar(filename, data, group_ticks, x_label, y_label, colors):
     plt.legend(p, bar_names, fontsize=45, loc='upper left')
     plt.tight_layout()
     plt.savefig(filename)
+
