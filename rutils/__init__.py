@@ -5,3 +5,4 @@ from .gpu import get_free_gpu
 from .logger import BasicLogging, FileLogging
 from .time import get_current_time
 from .config import dict_to_json_file, json_file_to_dict, parser_args_to_dict
+from .results import parse_log, plot_2d_curve 
