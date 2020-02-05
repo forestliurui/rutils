@@ -65,3 +65,45 @@ def plot_2d_curve(filename, data, x_label, y_label, colors, markers):
     plt.legend(curve_names, fontsize=45)
     plt.tight_layout()
     plt.savefig(filename)
+
+def plot_bar(filename, data, group_ticks, x_label, y_label, colors):
+    """
+    plot the bar chart from data
+
+    @data: a dictionary mapping from bar_name to a list of values
+    @group_ticks: a list consisting of labels for each group
+    @x_label: a string for label along x-axis
+    @y_label: a string for label along y-axis
+    @colors: a dictionary mapping from bar_name to color
+
+    Examples:
+    data = {'gspar': [0.0043, 0.0085, 0.0237, 0.066],
+            'bandit': [0.0039, 0.00838, 0.0235, 0.0687],
+           }
+    group_ticks = [2, 4, 8, 16]
+    x_label = 'Number of Workers'
+    y_label = 'Communication Time'
+    colors = {"gspar": "mediumslateblue", "bandit": "tomato", "terngrad": "darkmagenta", 'qsgd': "silver", "atomo_svd": "c"}
+    """
+    num_groups = len(group_ticks)
+    num_bar = len(data)
+    bar_names = list(data.keys())
+
+    width = 1.0/(num_bar+1)
+    ind = np.arange(1, num_groups+1)
+    plt.figure(figsize = (20, 13))
+
+    p = []
+    left_loc = -(num_bar/2.0 - 0.5)
+    idx = 0
+    for name in bar_names:
+        p.append(plt.bar(ind + (left_loc + idx)*width, data[name], width*0.9, color=colors[name]))
+        idx += 1
+
+    plt.xlabel(x_label, fontsize=50)
+    plt.ylabel(y_label, fontsize=50)
+    plt.xticks(ind, group_ticks, fontsize=40)
+    plt.yticks(fontsize=40)
+    plt.legend(p, bar_names, fontsize=45, loc='upper left')
+    plt.tight_layout()
+    plt.savefig(filename)
