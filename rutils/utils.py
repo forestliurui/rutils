@@ -154,3 +154,12 @@ class DataPartitioner(object):
     def use(self, partition):
         return Partition(self.data, self.partitions[partition])
 
+def partition_dataset(dataset, size, rank):
+    """
+    Partition the dataset into size nonoverlapping chunks, and return the chunk with idx rank.
+    """
+    partition_sizes = [1.0 / size for _ in range(size)]
+    partitioner = DataPartitioner(dataset, partition_sizes)
+    partition = partitioner.use(rank)
+    return partition
+
