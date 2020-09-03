@@ -1,6 +1,7 @@
 import os
 import torch
 
+from utils import partition_dataset 
 from torchvision import datasets, transforms
 from torchvision.datasets import CIFAR10
 
@@ -150,7 +151,7 @@ def svhn(root='~/data/svhn', train_batch_size=128, test_batch_size=128, train_sh
                                                  shuffle=test_shuffle, num_workers=num_workers)
     return train_loader, test_loader
 
-def imagenet(root='~/data/imagenet', train_batch_size=1024, test_batch_size=1024, train_shuffle=True, test_shuffle=False, num_workers=0):   
+def imagenet(root='~/data/imagenet', train_batch_size=1024, test_batch_size=1024, train_shuffle=True, test_shuffle=False, num_workers=0, partition_size=0, partition_idx=0, partition_seed=1234):   
     from .imagenet import ImageNet 
     root = os.path.expanduser(root)
 
@@ -181,6 +182,8 @@ def imagenet(root='~/data/imagenet', train_batch_size=1024, test_batch_size=1024
                 normalize,
             ]))
     num_workers_dl = num_workers
+    if partition_size > 1:
+        train_dataset = partition_dataset(train_dataset, partition_size, partition_idx, partition_seed)
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=train_batch_size,
                                                   shuffle=train_shuffle, num_workers=num_workers_dl)
     test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=test_batch_size,
