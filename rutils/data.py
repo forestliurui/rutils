@@ -1,7 +1,7 @@
 import os
 import torch
 
-from utils import partition_dataset 
+from .utils import partition_dataset 
 from torchvision import datasets, transforms
 from torchvision.datasets import CIFAR10
 
