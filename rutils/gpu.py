@@ -6,6 +6,45 @@ from filelock import FileLock
 from .time import get_current_time
 import socket
 
+def get_free_gpus(hostname=None):
+    if hostname is None:
+        hostname = socket.gethostname()
+
+    lock = FileLock(hostname + '_get_free_gpu.lock')
+    with lock:
+      tmp_file = hostname + '_tmp_gpu'
+
+      os.system('nvidia-smi -q|grep Processes>'+tmp_file)
+      proc_no_available = [len(x.split())>=3 for x in open(tmp_file, 'r').readlines()]
+      os.system('rm '+tmp_file)
+
+    free_gpus = []
+    for idx in range(len(proc_no_available)):
+        if proc_no_available[idx] is False:
+            free_gpus.append(idx)
+
+    return free_gpus
+
+def get_free_gpus_from_hostlist(hostlist=None):
+    if hostlist is None:
+        hostlist = ["gpu-cn{:03d}".format(x) for x in range(1, 18)]
+
+    free_gpus_dict = {}
+    for hostname in hostlist:
+        tmp_file = hostname + '_tmp_gpu'
+        os.system('ssh '+ hostname + ' nvidia-smi -q|grep Processes>'+tmp_file)
+        proc_no_available = [len(x.split())>=3 for x in open(tmp_file, 'r').readlines()]
+        os.system('rm '+tmp_file)
+
+        free_gpus = []
+        for idx in range(len(proc_no_available)):
+            if proc_no_available[idx] is False:
+                free_gpus.append(idx)
+        if len(free_gpus) > 0:
+            free_gpus_dict[hostname] = free_gpus
+
+    return free_gpus_dict
+
 def get_free_gpu():
     """
     Get the index of the gpus with the most available GPU memory
