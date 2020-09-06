@@ -15,12 +15,12 @@ def get_free_gpus(hostname=None):
       tmp_file = hostname + '_tmp_gpu'
 
       os.system('nvidia-smi -q|grep Processes>'+tmp_file)
-      proc_no_available = [len(x.split())>=3 for x in open(tmp_file, 'r').readlines()]
+      proc_available = [len(x.split())>=3 for x in open(tmp_file, 'r').readlines()]
       os.system('rm '+tmp_file)
 
     free_gpus = []
-    for idx in range(len(proc_no_available)):
-        if proc_no_available[idx] is False:
+    for idx in range(len(proc_available)):
+        if proc_available[idx] is True:
             free_gpus.append(idx)
 
     return free_gpus
@@ -33,12 +33,12 @@ def get_free_gpus_from_hostlist(hostlist=None):
     for hostname in hostlist:
         tmp_file = hostname + '_tmp_gpu'
         os.system('ssh '+ hostname + ' nvidia-smi -q|grep Processes>'+tmp_file)
-        proc_no_available = [len(x.split())>=3 for x in open(tmp_file, 'r').readlines()]
+        proc_available = [len(x.split())>=3 for x in open(tmp_file, 'r').readlines()]
         os.system('rm '+tmp_file)
 
         free_gpus = []
-        for idx in range(len(proc_no_available)):
-            if proc_no_available[idx] is False:
+        for idx in range(len(proc_available)):
+            if proc_available[idx] is True:
                 free_gpus.append(idx)
         if len(free_gpus) > 0:
             free_gpus_dict[hostname] = free_gpus
