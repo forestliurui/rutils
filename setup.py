@@ -1,8 +1,9 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
   name='RL Utils',
   version='0.1dev',
-  packages=['rutils'],
+  packages=find_packages(),
   install_requires=[],
+
 )
