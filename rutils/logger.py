@@ -26,7 +26,8 @@ To set up the logger, add the following in a file
 """
 
 def setup_default():
-    logging.config.fileConfig('./logging.conf', disable_existing_loggers=False)
+    config_file = os.path.join(os.path.dirname(__file__), "logging.conf")
+    logging.config.fileConfig(config_file, disable_existing_loggers=False)
 
 def setup_logger(log_id="temp", folder="~/log"):
     # change the path of the log file
