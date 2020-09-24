@@ -1,109 +1,44 @@
 import logging
-import sys
+import logging.config
 import os
 
-logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s %(levelname)s: %(message)s',
-                    datefmt='%Y-%m-%d %H:%M:%S',
-                    # filename='../log/test.log',
-                    # filemode='w'
-                    stream=sys.stdout
-                    )
+logger = logging.getLogger(__name__)
 
-class BasicLogging():
-    def __init__(self):
-        BasicLogging.info('==============Init Logger to StdOut============')
-    
-    @staticmethod
-    def set_level(level):
-        logging.setLevel(level)
+"""
+To use logger, add the following in a file
+    import logging
+    logger = logging.getLogger(__name__)
 
-    @staticmethod
-    def debug(msg):
-        logging.debug(msg)
+    def func():
+        something
+        logger.info("msg")
+        something
 
-    @staticmethod
-    def info(msg):
-        logging.info(msg)
+To set up the logger, add the following in a file
+   import logging
 
-    @staticmethod
-    def warning(msg):
-        logging.warning(msg)
+   from logger import setup_logger
+   logger = logging.getLogger(__name__)
 
-    @staticmethod
-    def error(msg):
-        logging.error(msg)
+   def func():
+       setup_logger("log_id")
+       logger.debug("debug_msg")
+"""
 
-    @staticmethod
-    def critical(msg):
-        logging.critical(msg)
+def setup_default():
+    logging.config.fileConfig('./logging.conf', disable_existing_loggers=False)
 
+def setup_logger(log_id="temp", folder="~/log"):
+    # change the path of the log file
+    folder = os.path.expanduser(folder)
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+    filename = "{}.log".format(log_id)
+    filepath = os.path.join(folder, filename)
 
-class FileLogging():
-    def __init__(self, log_id=None, folder='~/log'):
-
-        # expand ~ to its full path
-        folder = os.path.expanduser(folder)
-
-        if log_id is None:
-          logger1 = logging.getLogger('to_screen')
-          logger1.setLevel(logging.INFO)
-          ch = logging.StreamHandler(sys.stdout)
-          formatter = logging.Formatter('%(asctime)s %(levelname)s: %(message)s')
-          ch.setFormatter(formatter)
-          logger1.addHandler(ch)
-          self.logger = logger1
-
-          self.logger.info('==============Init Logger to screen ============')
-        else:
-          logger2 = logging.getLogger('to_file')
-          logger2.setLevel(logging.INFO)
-
-          log_file = folder+'/{}.log'.format(log_id)
-          fh = logging.FileHandler(log_file)
-
-          formatter = logging.Formatter('%(asctime)s %(levelname)s: %(message)s')
-          fh.setFormatter(formatter)
-
-          logger2.addHandler(fh)
-
-          self.logger = logger2
-          
-          self.logger.info('==============Init Logger to '+ log_file  +'============')
-
-
-    def set_level(self, level):
-        """
-        set the level for logger
-
-        inputs:
-          - level: a string from ['DEBUG', 'INFO', 'WARNING', 'ERROR']
-
-        returns:
-          - None. Set the logger to the specified level
-        """
-        if level == 'DEBUG':
-            self.logger.setLevel(logging.DEBUG)
-        elif level == 'INFO':
-            self.logger.setLevel(logging.INFO)
-        elif level == 'WARNING':
-            self.logger.setLevel(logging.WARNING)
-        elif level == 'ERROR':
-            self.logger.setLevel(logging.ERROR)
-        else:
-            raise ValueError('level %s not supported!'%level)
-
-    def debug(self, msg):
-        self.logger.debug(msg)
-
-    def info(self, msg):
-        self.logger.info(msg)
-
-    def warning(self, msg):
-        self.logger.warning(msg)
-
-    def error(self, msg):
-        self.logger.error(msg)
-
-    def critical(self, msg):
-        self.logger.critical(msg)
+    import configparser
+    config = configparser.ConfigParser()
+    config.read(os.path.join(os.path.dirname(__file__), "logging.conf"))
+    config["handler_fileHandler"]["args"] = "('{}',)".format(filepath)
+    logging.config.fileConfig(config, disable_existing_loggers=False)
+    logger.info("==============Init Logger to {}============".format(filepath))
