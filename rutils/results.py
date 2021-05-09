@@ -5,7 +5,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-def parse_log(filename, metric, line_condition=None, skip_line=0):
+def parse_log(filename, metric, line_condition=None, skip_line=0, last_line=None):
     """
     Parse metric from all lines from filename that contain the string line_condition
 
@@ -19,7 +19,12 @@ def parse_log(filename, metric, line_condition=None, skip_line=0):
     for line in f:
         line_idx += 1 
         if line_idx < skip_line:
+            # any line before skip_line will be ignored
             continue
+        if last_line is not None and line_idx > last_line:
+            # any line beyond last_line will be ignored
+            continue
+
         if line_cond is None or line_cond in line:
             idx = line.find(metric)
             if idx < 0:
