@@ -43,3 +43,6 @@ def setup_logger(log_id="temp", folder="~/log"):
     config["handler_fileHandler"]["args"] = "('{}',)".format(filepath)
     logging.config.fileConfig(config, disable_existing_loggers=False)
     logger.info("==============Init Logger to {}============".format(filepath))
+
+def print(msg, **kwargs):
+    logger.info(msg)
